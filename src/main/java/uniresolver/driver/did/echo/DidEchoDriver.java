@@ -11,41 +11,50 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.HashMap;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import did.Authentication;
 import did.DIDDocument;
-import did.JsonLdObject;
-import did.PublicKey;
-import did.Service;
 import uniresolver.ResolutionException;
 import uniresolver.driver.Driver;
 import uniresolver.result.ResolveResult;
 
 public class DidEchoDriver implements Driver {
 
-    private static Logger log = LoggerFactory.getLogger(DidEchoDriver.class);
+    public String mainnetKey = "rpcUrlMainnet";
+
+    public String testnetKey = "rpcUrlTestnet";
+
+    public String defaultMainnet = "http://localhost:80";
+
+    public String defaultTestnet = "http://localhost:80";
 
     public static final Pattern DID_ECHO_PATTERN_METHOD = Pattern.compile("^did:echo:[0|1].(.*)$");
+
     public static final Pattern DID_ECHO_PATTERN_METHOD_OBJECT_ID = Pattern.compile("^[1].\\d+.\\d+$");
+
+    private static Logger log = LoggerFactory.getLogger(DidEchoDriver.class);
 
     private Map<String, Object> properties = new HashMap<String, Object> ();
 
     public DidEchoDriver() {
         try {
-			String envRpcUrl = System.getenv("DID_ECHO_DRIVER_RPC_URL");
+			String envRpcUrlMainnet = System.getenv("DID_ECHO_DRIVER_MAINNET_RPC_URL");
+			String envRpcUrlTestnet = System.getenv("DID_ECHO_DRIVER_TESTNET_RPC_URL");
 
-			if (envRpcUrl != null) {
-                properties.put("rpcUrl", envRpcUrl);
+			if (envRpcUrlMainnet != null) {
+                properties.put(mainnetKey, envRpcUrlMainnet);
             } else {
-                properties.put("rpcUrl", "http://localhost:80");
+                properties.put(mainnetKey, defaultMainnet);
             }
 
-            log.info("Loading from environment: " + properties.get("rpcUrl"));
+			if (envRpcUrlTestnet != null) {
+                properties.put(testnetKey, envRpcUrlTestnet);
+            } else {
+                properties.put(testnetKey, defaultTestnet);
+            }
+
+            log.info("Loading from environment:\tmainnet = " + properties.get(mainnetKey) + "\ttestnet = " + properties.get(testnetKey));
 		} catch (Exception ex) {
 			throw new IllegalArgumentException(ex.getMessage(), ex);
 		}
@@ -55,21 +64,29 @@ public class DidEchoDriver implements Driver {
 	public ResolveResult resolve(String identifier) throws ResolutionException {
         Matcher matcher = DID_ECHO_PATTERN_METHOD.matcher(identifier);
 		if (!matcher.matches()) {
-            log.info("DID method doesn't match pattern!");
             throw new ResolutionException("DID method doesn't match pattern!");
         }
 
-        String objectId = matcher.group(1);
+        String typeOfNetwork = matcher.group(1);
+        String objectId = matcher.group(2);
         matcher = DID_ECHO_PATTERN_METHOD_OBJECT_ID.matcher(objectId);
         if (!matcher.matches()) {
-            log.info("DID method doesn't match pattern!");
             throw new ResolutionException("DID method doesn't match pattern!");
         }
         String getObjectString = "{\"jsonrpc\": \"2.0\", \"method\": \"get_objects\", \"params\": [[\"" + objectId + "\"]], \"id\": 1}";
         log.info("JSON Request: " + getObjectString);
 
+        ResolveResult resolveResult = null;
+
         try {
-            URL url = new URL(String.valueOf(properties.get("rpcUrl")));
+            URL url;
+            if (typeOfNetwork == "0") {
+                url = new URL(String.valueOf(properties.get(mainnetKey)));
+            } else if (typeOfNetwork == "1") {
+                url = new URL(String.valueOf(properties.get(testnetKey)));
+            } else {
+                throw new ResolutionException("Bad network type!");
+            }
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
             connection.setRequestMethod("POST");
@@ -89,22 +106,17 @@ public class DidEchoDriver implements Driver {
                 response += strCurrentLine;
             }
 
-            log.info("JSON response: " + response);
-
-            JsonParser parser = new JsonParser();
-            JsonObject resp = (JsonObject) parser.parse(new StringReader(response));
-
-            log.info("RPC resp: " + resp.toString());
+            resolveResult = ResolveResult.build(DIDDocument.fromJson(response));
 
         } catch (java.net.MalformedURLException e) {
             throw new ResolutionException("Bad url of node! " + e.getMessage());
         } catch (java.net.ProtocolException e) {
             throw new ResolutionException("Protocol exception! " + e.getMessage());
         } catch (java.io.IOException e) {
-            throw new ResolutionException("IO exception! " + e.getMessage());
+            throw new ResolutionException("IO exception! Can be invalid json response! " + e.getMessage());
         }
         
-        return null;
+        return resolveResult;
     }
 
 	@Override
