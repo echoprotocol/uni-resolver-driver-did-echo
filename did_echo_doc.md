@@ -12,9 +12,10 @@ The emergence of distributed ledger technology (DLT) and blockchain technology p
 
 ## DID in ECHO network
 
-DID Document храниться в объекте протокола ECHO. Для этого разработано три типа операций: create, update, delete.
+DID Document формируется из объекта протокола ECHO.
+Для взаимодействия с DID Document разработано три типа операций: create, update, delete.
 
-DID в ECHO может иметь три типа:
+На данный момент DID в ECHO может иметь три типа:
 
 1. DID для аккаунта.
 2. DID для ассета.
@@ -33,7 +34,7 @@ Network type can be '0' for mainnet, '1' for testnet and '2' for devnet. Next go
 ```
 echo-did = "did:echo:" echo-specific-idstring
 echo-specific-idstring = [ echo-network  ":" ] echo-object-id
-echo-network  = "0" / "1" / "2"
+echo-network  = "0" / "1" / "2" / "255"
 echo-object-id  = 1*DIGIT "." 1*DIGIT "." 1*DIGIT
 ```
 
@@ -48,11 +49,11 @@ Example `echo` DIDs:
 ### Operation validation
 
 Мы можем использовать DID одного из трех типов, описанных выше.
-Для этго их необходимо провалидировать, только владелец аккаунта/ассета/контракта будет иметь возможность создавать DID для данных объектов.
+Для этого их необходимо провалидировать, только владелец аккаунта/ассета/контракта будет иметь возможность создавать DID для данных объектов.
 
 ### DID API
 
-Так в ECHO существует DID API, которое возвращает готовый DID document, заполненные в соотвествии со стандартом, ссылка на который есть выше.
+Так же в ECHO существует DID API, которое возвращает готовый DID document, заполненные в соотвествии со стандартом, ссылка на который есть выше.
 
 ### `"publicKey"` and `"authentication"` fields of DID documents
 
@@ -60,7 +61,7 @@ Example `echo` DIDs:
 
 ## DID implementation
 
-### Operation
+### Operations
 
 #### `did_create_operation`
 
@@ -68,7 +69,7 @@ Example `echo` DIDs:
 
 * registrar - аккаунт создающий DID
 * essence - object id требующее подтверждение с помощью DID
-* public_keys - set из pubkeys `Ed25519` в кодировке `Base58`
+* public_keys - set из pubkeys `Ed25519` в кодировке `Base58` (может быть пустым)
 
 #### `did_update_operation`
 
@@ -88,21 +89,21 @@ Example `echo` DIDs:
 
 ### Operation validation
 
-Есть два этапа валидации операции
+Есть два этапа валидации операции:
 
-* validate
+1. validate
 
-Visitor, который проверит, что ключи находятся в нужной кодировке.
+>Visitor, который проверит, что ключи находятся в нужной кодировке.
 
-* do_evaluate
+2. do_evaluate
 
-Метод, который проверяет, что(один из трех вариантов):
+> Метод, который проверяет, что(один из трех вариантов):
 
-1. Аккаунт, отправивший операцию является аккаунтом для которого создается DID.
+> 2.1. Аккаунт, отправивший операцию является аккаунтом для которого создается DID.
 
-2. Аккаунт, отправивший операцию является аккаунтом, выпустившим ассет.
+> 2.2. Аккаунт, отправивший операцию является аккаунтом, выпустившим ассет.
 
-3. Аккаунт, отправивший операцию является аккаунтом-владельцем контракта.
+> 2.3. Аккаунт, отправивший операцию является аккаунтом-владельцем контракта.
 
 ### DID API
 
