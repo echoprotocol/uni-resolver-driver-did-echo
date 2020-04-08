@@ -37,7 +37,7 @@ public class DidEchoDriver implements Driver {
 
     public String defaultDevnet = "http://localhost:8090/rpc";
 
-    public static final Pattern DID_ECHO_PATTERN_METHOD = Pattern.compile("^did:echo:(255|0|1|2).(\\d+\\.\\d+\\.\\d+)$");
+    public static final Pattern DID_ECHO_PATTERN_METHOD = Pattern.compile("^did:echo:(255|0|1|2)\\.(\\d+\\.\\d+\\.\\d+)$");
 
     private static Logger log = LoggerFactory.getLogger(DidEchoDriver.class);
 
