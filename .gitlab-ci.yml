@@ -1,0 +1,14 @@
+stages:
+  - deploy
+
+deploy:docker:
+  stage: deploy
+  script:
+    - docker build -f docker/Dockerfile -t echoprotocol/uni-resolver-driver-did-echo:$CI_COMMIT_TAG -t echoprotocol/uni-resolver-driver-did-echo:latest  .
+    - docker login --username echoprotocol -p $DOCKER_HUB_PASSWORD
+    - docker push echoprotocol/uni-resolver-driver-did-echo:latest
+    - docker push echoprotocol/uni-resolver-driver-did-echo:$CI_COMMIT_TAG
+  only:
+    - tags
+  tags:
+    - echo
