@@ -3,7 +3,7 @@ did:echo method
 19th March 2020
 
 Anton Shkindzer <<a.shkinder@pixelplex.io>>,
-Anzhy Cherniavsky <<a.chernyavski@pixelplex.io>>
+Anzhy Chernyavski <<a.chernyavski@pixelplex.io>>
 
 [Decentralized Identifiers](https://w3c-ccg.github.io/did-spec/) are designed to be compatible with any distributed ledger or network (called the target system).
 We propose a new DID method that allows special objects in ECHO network to be treated as valid DIDs.
