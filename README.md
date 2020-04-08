@@ -16,7 +16,7 @@ did:echo:1.1.2.0
 
 ```
 docker build -f ./docker/Dockerfile . -t driver-did-echo
-docker run -p 8080:8080 driver-did-echo
+docker run --network host -p 8080:8080 driver-did-echo
 curl -X GET http://localhost:8080/1.0/identifiers/did:echo:0.1.25.0
 ```
 
