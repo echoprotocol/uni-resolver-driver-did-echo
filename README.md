@@ -24,9 +24,9 @@ curl -X GET http://localhost:8080/1.0/identifiers/did:echo:0.1.25.0
 
 You should set your own URL of nodes by setting up env variables:
 
-* DID_ECHO_DRIVER_MAINNET_RPC_URL for mainnet url
-* DID_ECHO_DRIVER_TESTNET_RPC_URL for testnet url
-* DID_ECHO_DRIVER_DEVNET_RPC_URL for devnet url
+* uniresolver_driver_did_echo_mainnet_rpc_url for mainnet url
+* uniresolver_driver_did_echo_testnet_rpc_url for testnet url
+* uniresolver_driver_did_echo_devnet_rpc_url for devnet url
 
 ## Maintainers
 

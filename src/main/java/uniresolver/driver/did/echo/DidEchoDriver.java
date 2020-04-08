@@ -37,7 +37,7 @@ public class DidEchoDriver implements Driver {
 
     public String defaultDevnet = "http://localhost:8090/rpc";
 
-    public static final Pattern DID_ECHO_PATTERN_METHOD = Pattern.compile("^did:echo:([0|1|2|255]).(\\d+\\.\\d+\\.\\d+)$");
+    public static final Pattern DID_ECHO_PATTERN_METHOD = Pattern.compile("^did:echo:(255|0|1|2).(\\d+\\.\\d+\\.\\d+)$");
 
     private static Logger log = LoggerFactory.getLogger(DidEchoDriver.class);
 
@@ -45,9 +45,9 @@ public class DidEchoDriver implements Driver {
 
     public DidEchoDriver() {
         try {
-            String envRpcUrlMainnet = System.getenv("DID_ECHO_DRIVER_MAINNET_RPC_URL");
-            String envRpcUrlTestnet = System.getenv("DID_ECHO_DRIVER_TESTNET_RPC_URL");
-            String envRpcUrlDevnet = System.getenv("DID_ECHO_DRIVER_DEVNET_RPC_URL");
+            String envRpcUrlMainnet = System.getenv("uniresolver_driver_did_echo_mainnet_rpc_url");
+            String envRpcUrlTestnet = System.getenv("uniresolver_driver_did_echo_testnet_rpc_url");
+            String envRpcUrlDevnet = System.getenv("uniresolver_driver_did_echo_devnet_rpc_url");
 
 			if (envRpcUrlMainnet != null) {
                 properties.put(mainnetKey, envRpcUrlMainnet);
