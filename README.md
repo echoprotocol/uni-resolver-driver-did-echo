@@ -31,4 +31,4 @@ You should set your own URL of nodes by setting up env variables:
 ## Maintainers
 
 - Anton Shkindzer [@pixelplex](https://github.com/nikonok)
-- Anzhy Cherniavsky [@pixelplex](https://github.com/anzhy-chernyavski)
+- Anzhy Chernyavski [@pixelplex](https://github.com/anzhy-chernyavski)
