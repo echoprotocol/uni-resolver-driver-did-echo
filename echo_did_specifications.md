@@ -324,7 +324,11 @@ TODO
 
 ## Privacy Considerations
 
-TODO
+If a DID method specification is written for a public DID registry where all DIDs and DID documents are publicly available, it is critical that DID documents contain no PII. All PII should be kept behind service endpoints under the control of the DID subject. With this privacy architecture, PII can be exchanged on a private, peer-to-peer basis using communications channels identified and secured by public key descriptions in DID documents.
+
+We don't store any personal information in the DID document. DID documents in Echo should be limited to just public keys and service endpoints for key recovery.
+
+Decentralized Identifiers are global and often long-lived and are thus susceptible to being tracked across multiple interactions. Implementers are urged to be wary of using long lived identifiers where tracking protection is a system requirement.
 
 ## Performance Considerations
 
